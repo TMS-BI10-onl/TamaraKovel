@@ -1,0 +1,77 @@
+ -- 1.
+ --Извлечь все столбцы из таблицы Sales.SalesTerritory.
+	USE AdventureWorks2017
+		SELECT *
+		FROM Sales.SalesTerritory
+
+--Извлечь столбцы TerritoryID и Name из таблицы Sales.SalesTerritory.
+		SELECT TerritoryID, [Name]
+			FROM Sales.SalesTerritory
+--Найдите все данные, которые существует для людей из Person.Person с LastName = ‘Norman’.
+	SELECT *
+		FROM Person.Person
+			WHERE LastName ='Norman'
+
+--Найдите все строки из Person.Person, где EmailPromotion не равен 2. 
+		SELECT *
+			FROM Person.Person
+					WHERE EmailPromotion <> 2
+--3.
+
+--GROUPING
+SELECT SalesQuota, SUM(SalesYTD) 'TotalSalesYTD', GROUPING(SalesQuota) AS 'Grouping'  
+FROM Sales.SalesPerson  
+GROUP BY SalesQuota; 
+
+--VAR
+SELECT VAR(distinct Bonus) AS Bonus  
+FROM Sales.SalesPerson;
+
+--STDEVP
+SELECT STDEVP(Bonus)  AS Bonus
+FROM Sales.SalesPerson; 
+
+--4.
+		
+/* Сколько уникальных PersonType существует для людей из Person.Person 
+с LastName начинающиеся с буквы М или не содержащий 1 в EmailPromotion.*/
+		SELECT DISTINCT PersonType   --COUNT(DISTINCT PersonType) --ЕСЛИ НАМ НУЖНА ПРОСТО ЦИФРА,А НЕ СПИСОК ЗНАЧЕНИЙ
+			FROM Person.Person 
+				WHERE LastName LIKE 'M%' 
+					OR EmailPromotion <> 1
+   
+
+/*Вывести первых 3 специальных предложений из Sales.SpecialOffer 
+с наибольшими DiscountPct, которые начинали действовать с 2013-01-01 по 2014-01-01*/
+		SELECT TOP 3 *
+			FROM Sales.SpecialOffer
+				WHERE StartDate BETWEEN '2013-01-01' AND '2014-01-01'
+					ORDER BY DiscountPct DESC
+			
+
+/*Найти самый минимальный вес и самый максимальный размер продукта из Production.Product.*/
+		SELECT MIN(Weight) AS MinWeight, 
+			MAX(Size) AS MaxSize
+				FROM Production.Product
+				
+
+/* Найти самый минимальный вес и самый максимальный размер продукта 
+для каждой подкатегории ProductSubcategoryID из Production.Product.*/ 
+		SELECT ProductSubcategoryID,
+			MIN(Weight) AS MinWeight,
+				MAX(Size) AS MaxSize
+					FROM Production.Product
+					--WHERE Weight IS NOT NULL AND Size IS NOT NULL  -- ЭТО В СЛУЧАЕ ЕСЛИ НАМ НЕ НУЖНЫ ПОДКАТЕГОРИИ С NULL ЗНАЧЕНИЯМИ ДЛЯ ВЕСА И РАЗМЕРА
+						GROUP BY ProductSubcategoryID
+
+/*Найти самый минимальный вес и самый максимальный размер продукта для каждой подкатегории 
+ProductSubcategoryID из Production.Product, где цвет продукта определен(Color)*/
+		SELECT ProductSubcategoryID, 
+			MIN(Weight) AS MinWeight,
+				MAX(Size) AS MaxSize
+					FROM Production.Product
+						WHERE Color IS NOT NULL       
+					--AND Weight IS NOT NULL AND Size IS NOT NULL  -- ЭТО В СЛУЧАЕ ЕСЛИ НАМ НЕ НУЖНЫ ПОДКАТЕГОРИИ С NULL ЗНАЧЕНИЯМИ
+					GROUP BY ProductSubcategoryID
+					
+					
