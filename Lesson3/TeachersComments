@@ -1,0 +1,25 @@
+Well done!
+
+1.
+b)-1
+You'll get incorrect result because of missed filter price>10.
+Also, filter %X% includes X% and %X.
+You edited this task, but still missing one condition)
+
+3.
+a) -1
+Great idea, but unfortunately it's not helping :( The problem is filter s.id is null. It's never-happening condition, so it'll filter out all the rows.
+Correct answer:
+
+SELECT Название
+FROM Фирмы-производители 
+WHERE id NOT IN (SELECT преп.id_фирмы
+				FROM Фармпрепараты преп
+						JOIN Продажи прод ON преп.id=прод.id_фармпрепарата
+						JOIN Кассовые_чеки чек ON прод.id_чека=чек.id 
+				WHERE YEAR(Дата)=2019)
+
+
+Mark: 7-2=5
++2 for task 4
+7
