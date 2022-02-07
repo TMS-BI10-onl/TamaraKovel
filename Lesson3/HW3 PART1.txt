@@ -19,14 +19,14 @@ ORDER BY PriceRange ASC
 Purchasing.ProductVendor и Purchasing.Vendor, где StandardPrice больше $10. 
 Также в имени вендора должна присутствовать (вне зависимости от положения) буква X 
 или имя должно начинаться на букву N.*/
-SELECT Name, PPV.ProductID, PPV.BusinessEntityID, PV.BusinessEntityID
+SELECT PV.Name, PPV.ProductID, PPV.BusinessEntityID, PV.BusinessEntityID
 FROM Purchasing.ProductVendor PPV
 JOIN Purchasing.Vendor PV ON PPV.BusinessEntityID=PV.BusinessEntityID
-WHERE Name LIKE '%X%' OR Name LIKE 'N%'
+WHERE PV.Name LIKE '%X%' OR PV.Name LIKE 'X%' OR PV.Name LIKE '%X' OR PV.Name LIKE 'N%'
 
 /*c)	Найти имена всех вендоров, продукция которых не продавалась за всё время. 
 Необходимо использовать следующую схему соединения таблиц Purchasing.ProductVendor и Purchasing.Vendor:*/
-SELECT Name
+SELECT PV.Name
 FROM Purchasing.Vendor PV
 LEFT JOIN Purchasing.ProductVendor PPV  ON PV.BusinessEntityID=PPV.BusinessEntityID
 WHERE PPV.BusinessEntityID IS NULL
