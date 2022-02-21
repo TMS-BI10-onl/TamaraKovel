@@ -1,0 +1,19 @@
+Well done!
+
+A -1
+Correct answer: 0nf
+We can't store values like this.
+
+B -0.25
+We're deleting calculated fields when moving to the 3nf.
+
+C
+It would be better to have numbers as ids :)
+
+D
+Why car_id can't be a PK?
+
+E,F -0.5
+It's actually 2nf.
+
+Mark: 8
