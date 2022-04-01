@@ -1,0 +1,53 @@
+--1.	Покажите всех менеджеров, которые имеют в подчинении больше 6-ти сотрудников.
+SELECT MANAGER_ID, COUNT(EMPLOYEE_ID) AS cnt_Employees
+FROM EMPLOYEES
+GROUP BY MANAGER_ID
+HAVING COUNT(EMPLOYEE_ID)>6
+
+/*2.	Вывести min и max зарплату с вычетом commission_pct для каждого департамента. (commission_pct на базе указывается в процентах). */ 
+SELECT d.DEPARTMENT_NAME, 
+MIN(e.SALARY - e.SALARY * e.COMISSION_PCT / 100) AS MIN_SALARY, 
+MAX(e.SALARY - e.SALARY * e.COMISSION_PCT / 100) AS MAX_SALARY
+FROM DEPARTMENS d 
+JOIN EMPLOYEES e ON d.DEPARTMENT_ID=e.DEPARTMENT_ID
+GROUP BY d.DEPARTMENT_NAME, e.COMISSION_PCT
+-- меня смутило наличие min и max salary в таблице jobs, я не поняла к чему они, поэтому решила считать по salary из employees
+
+--3.	Вывести только регион, где работают больше всего людей.
+SELECT TOP 1 WITH TIES REGION_NAME 
+FROM 
+( SELECT r.REGION_NAME, COUNT(e.EMPLOYEE_ID) AS cnt_Employees
+FROM REGIONS r
+JOIN COUNTRIES c ON r.REGION_ID=c.REGION_ID
+JOIN LOCATIONS l ON c.COUNTRY_ID=l.COUNTRY_ID
+JOIN DEPARTMENS d ON l.LOCATION_ID=d.LOCATION_ID
+JOIN EMPLOYEES e ON d.DEPARTMENT_ID=e.DEPARTMENT_ID
+GROUP BY r.REGION_NAME) t
+ORDER BY cnt_Employees DESC
+
+--4.	Найдите разницу в процентах между средней зп по каждому департаменту от общей средней (по всем департаментам).
+SELECT d.DEPARTMENT_NAME,
+(AVG(e.SALARY) OVER (PARTITION BY  d.DEPARTMENT_NAME) / AVG(e.SALARY) OVER()) * 100 AS dif
+FROM DEPARTMENS d 
+JOIN EMPLOYEES e ON d.DEPARTMENT_ID=e.DEPARTMENT_ID
+GROUP BY d.DEPARTMENT_NAME, e.SALARY
+
+--5.	Найдите людей, кто проработал больше, чем 10 лет в одном департаменте. 
+SELECT CONCAT(FIRST_NAME, ' ', LAST_NAME) AS FULL_NAME,
+YEAR(GETDATE()) - YEAR(START_DATE) AS date_work
+FROM
+(SELECT FIRST_NAME, LAST_NAME, DEPARTMENT_ID, START_DATE, END_DATE
+FROM EMPLOYEES e
+JOIN DEPARTMENS d ON e.DEPARTMENT_ID=d.DEPARTMENT_ID
+JOIN JOB_HISTORY j ON e.EMPLOYEE_ID=j.EMPLOYEE_ID) t
+WHERE END_DATE IS NULL
+GROUP BY FIRST_NAME, LAST_NAME, DEPARTMENT_ID, START_DATE, END_DATE
+HAVING YEAR(GETDATE()) - YEAR(HireDate) > 10
+
+--6.	Найдите людей, кто занимает 5-10 место по размеру зарплаты.  
+SELECT CONCAT(FIRST_NAME, ' ', LAST_NAME) AS FULL_NAME
+FROM 
+(SELECT FIRST_NAME, LAST_NAME, SALARY,
+DENSE_RANK () OVER (ORDER BY SALARY DESC) AS d_rnk
+FROM EMPLOYEES) t
+WHERE d_rnk BETWEEN 5 AND 10
