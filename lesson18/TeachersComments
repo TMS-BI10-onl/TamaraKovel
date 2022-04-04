@@ -1,0 +1,14 @@
+Well done!
+
+3. -0.5
+No need in the subquery. Count() can be used in the order by.
+
+4. -0.5
+Why do we need group by?
+
+5. -1
+First of all, even in your solution we don't need a subquery. Once again, Why do we need group by?
+Also, the problem is that you're counting only current (last) department, which employee is working in. But the same employee can have a previous department where he worked for more than 10 years.
+
+Mark: 8
+Test mark: 10
